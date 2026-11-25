@@ -120,7 +120,7 @@ def picture(slide, name, x, y, w=None, h=None):
 s = new_slide(
     "Gá kẹp quyết định độ chính xác của chi tiết phay CNC",
     "[~2 phút] Mở đầu bằng câu hỏi: máy chính xác 0,001 mm mà phôi kẹp lệch thì kết quả ra sao? "
-    "Gá kẹp lắp trên bàn máy với máy phay (máy tiện thì lắp trên trục chính). "
+    "Gá kẹp của máy phay lắp trên bàn máy. "
     "Bốn nhiệm vụ lấy từ bài giảng chương 2.3. Máy CNC tập trung nhiều nguyên công trong một lần gá nên "
     "một sai số gá sẽ lặp lại cho cả loạt chi tiết.")
 s.shapes._spTree.remove(body(s)._element)
@@ -141,7 +141,7 @@ for i, (n, h, d) in enumerate(cards):
     text(s, x + 0.1, y0 + 1.15, cw - 0.2, 0.6, h, size=20, bold=True, color=RED)
     text(s, x + 0.1, y0 + 1.75, cw - 0.2, 1.0, d, size=16, color=INK)
 box(s, 0.45, 4.6, 12.4, 0.07, fill=GOLD)
-text(s, 0.45, 4.85, 12.4, 0.5, "Vị trí lắp: trên bàn máy (máy phay)  |  trên trục chính (máy tiện)",
+text(s, 0.45, 4.85, 12.4, 0.5, "Vị trí lắp: trên bàn máy phay",
      size=20, color=INK)
 text(s, 0.45, 5.5, 12.4, 0.9,
      ["Máy CNC gia công nhiều nguyên công trong một lần gá",
@@ -261,7 +261,7 @@ set_bullets(body(s), [
     ("Hệ gá modul: ", "ghép từ bộ phận tiêu chuẩn, không cần đổi gá"),
     ("Bàn quay hai vị trí: ", "gá phôi bên ngoài, bàn quay tự đưa vào máy"),
     ("Bàn gá chuẩn (palette): ", "chuẩn bị phôi ngoài vùng gia công"),
-    ("Robot + mâm cặp: ", "đóng mở tự động bằng thuỷ lực hoặc khí nén"),
+    ("Robot + kẹp tự động: ", "cơ cấu kẹp đóng mở bằng thuỷ lực hoặc khí nén"),
 ], 0.45, 1.3, 6.0, 5.3, size=21)
 picture(s, "p-006.png", 6.8, 1.45, w=6.1)
 text(s, 6.8, 5.5, 6.1, 0.6,
@@ -316,7 +316,7 @@ COMMENTS = [
     "Chưa có hình ê tô (2.11a) vì ảnh chụp sách bị nghiêng và có bóng. Nếu có ảnh rõ hơn thì thêm vào.",
     "Ba hàng đầu theo bài giảng chương 2.3 (trang 14). Ý 'bàn từ tính chỉ dùng cho phôi có từ tính' là bổ sung "
     "ngoài tài liệu, cần xác nhận trước khi trình bày. Không đưa số lực kẹp vì tài liệu không nêu.",
-    "Hệ gá modul và bàn quay hai vị trí: bài giảng chương 2.3 (trang 14). Robot + mâm cặp: trang 15. "
+    "Hệ gá modul và bàn quay hai vị trí: bài giảng chương 2.3 (trang 14). Robot + kẹp tự động: trang 15. "
     "Bàn gá chuẩn (palette): giáo trình trang 43. Chú thích trên hình gốc bằng tiếng Anh.",
     "Ba cột là gợi ý chọn phương án tổng hợp từ các slide trước, không phải quy tắc có trong tài liệu. "
     "Có thể đổi câu hỏi thảo luận cho khớp bài giảng của thầy.",
