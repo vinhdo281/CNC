@@ -1,0 +1,229 @@
+LỜI THOẠI THUYẾT TRÌNH
+
+Đề tài: Tìm hiểu hệ thống gá kẹp trong máy phay CNC
+
+Slide 1 – Bìa
+
+Kính chào thầy cô.
+
+Hôm nay, nhóm em sẽ trình bày về đề tài hệ thống gá kẹp trong máy phay CNC.
+
+Trong quá trình tìm hiểu, nhóm em tập trung vào một câu hỏi: Làm thế nào để giữ phôi đúng vị trí, đủ chắc chắn trong quá trình gia công, mà vẫn đảm bảo thuận tiện và tiết kiệm thời gian?
+
+Bài trình bày của nhóm em gồm sáu nội dung chính, từ vai trò của gá kẹp, nguyên lý định vị và kẹp chặt, các phương pháp kẹp cơ khí, nguồn lực kẹp, cho đến một số xu hướng gá kẹp hiện đại.
+
+Slide 2 – Gá kẹp quyết định độ chính xác
+
+Trước khi đi vào các loại đồ gá, em muốn đặt ra một câu hỏi nhỏ.
+
+Máy CNC có độ chính xác rất cao, có thể đạt đến mức một phần nghìn milimét. Nhưng nếu phôi được gá lệch ngay từ đầu, thì dù máy có chính xác đến đâu, chi tiết gia công vẫn có thể bị sai.
+
+Vậy nên, độ chính xác của máy chưa đủ, mà còn phụ thuộc rất nhiều vào cách gá phôi.
+
+Cơ cấu gá kẹp có bốn nhiệm vụ chính.
+
+Đầu tiên là định vị chính xác, tức là xác định đúng vị trí của phôi trên bàn máy.
+
+Tiếp theo là kẹp chặt, để phôi không bị xê dịch khi chịu lực cắt.
+
+Thứ ba là thay phôi nhanh. Khi gia công nhiều chi tiết, việc tháo và lắp phôi càng nhanh thì thời gian máy phải dừng càng ít.
+
+Và cuối cùng là đảm bảo độ lặp lại. Nghĩa là khi thay phôi mới, ta vẫn có thể đưa phôi về đúng vị trí như lần gá trước.
+
+Ngoài ra, đồ gá còn cần đảm bảo khả năng tiếp cận của dao. Nói đơn giản là sau khi gá phôi, dao vẫn phải đi đến được những vị trí cần gia công, chứ không bị đồ gá chắn mất.
+
+Về vị trí lắp đặt, trên máy phay, cơ cấu gá kẹp thường được bố trí trên bàn máy. Còn với máy tiện, cơ cấu kẹp thường nằm trên trục chính.
+
+Trong bài này, nhóm em sẽ tập trung vào hệ thống gá kẹp trên máy phay CNC.
+
+Một điểm cần lưu ý là máy CNC thường thực hiện nhiều nguyên công trong một lần gá. Vì vậy, nếu phôi bị gá sai thì sai số đó có thể ảnh hưởng đến cả quá trình gia công, thậm chí là toàn bộ loạt chi tiết.
+
+Đó cũng là lý do gá kẹp cần được lựa chọn và thực hiện cẩn thận ngay từ đầu.
+
+Slide 3 – Định vị và kẹp chặt
+
+Ở phần trước, em có nhắc đến hai nhiệm vụ quan trọng nhất của gá kẹp là định vị và kẹp chặt.
+
+Hai khái niệm này nghe khá giống nhau, nhưng thực ra chúng có vai trò khác nhau.
+
+Định vị là xác định phôi nằm ở đâu, hay nói cụ thể hơn là xác định vị trí của phôi so với hệ tọa độ gia công.
+
+Còn kẹp chặt là giữ phôi ở vị trí đó, để phôi không bị dịch chuyển trong quá trình cắt.
+
+Để dễ hình dung, em lấy một ví dụ đơn giản trong sinh hoạt hằng ngày.
+
+Khi viết, chúng ta thường đặt tờ giấy sát vào góc bàn để giấy nằm đúng vị trí, sau đó dùng tay giữ giấy lại để giấy không bị trượt.
+
+Việc đặt giấy sát vào góc bàn chính là định vị. Còn việc dùng tay giữ giấy là kẹp chặt.
+
+Nếu chỉ giữ giấy mà không đặt đúng vị trí, thì giấy vẫn có thể bị giữ chắc nhưng lại nằm sai chỗ.
+
+Ngược lại, nếu đặt giấy đúng vị trí nhưng không giữ lại, thì khi có lực tác động, giấy vẫn có thể bị trượt.
+
+Trong gia công CNC, lực tác động đó chính là lực cắt.
+
+Chỉ vào sơ đồ bên phải.
+
+Ở đây, phôi được đặt trên bàn máy và tựa vào mặt chuẩn màu vàng.
+
+Mặt chuẩn có nhiệm vụ xác định vị trí của phôi. Còn hai mũi tên màu đỏ thể hiện lực kẹp, có tác dụng ép phôi sát vào mặt chuẩn và xuống bàn máy.
+
+Như vậy, mặt chuẩn đảm nhiệm việc định vị, còn lực kẹp giúp phôi giữ nguyên vị trí đã được định vị.
+
+Chấm đỏ ở góc phôi là gốc phôi, hay còn gọi là điểm không của chi tiết.
+
+Gốc phôi được người lập trình lựa chọn, nhưng khi gá thực tế thì vị trí này cần được xác định phù hợp với cách gá và hệ tọa độ gia công.
+
+Theo nội dung giáo trình, trục Z được xác định theo trục chính, còn trục X song song với mặt kẹp trong sơ đồ này.
+
+Từ đó có thể thấy, định vị và kẹp chặt phải phối hợp với nhau. Định vị đúng nhưng kẹp không đủ chắc thì phôi vẫn có thể dịch chuyển. Còn kẹp rất chắc nhưng định vị sai thì chi tiết vẫn không đạt yêu cầu.
+
+Slide 4 – Các phương pháp kẹp cơ khí
+
+Tiếp theo, nhóm em sẽ giới thiệu hai phương pháp kẹp cơ khí khá phổ biến trên máy phay CNC.
+
+Phương pháp đầu tiên là ê tô.
+
+Đây là loại đồ gá quen thuộc, có cấu tạo tương đối đơn giản và dễ sử dụng. Ê tô thường phù hợp với các chi tiết dạng khối, có bề mặt tương đối thuận lợi để kẹp.
+
+Với những nguyên công phay đơn giản, chỉ cần một ê tô có má kẹp điều chỉnh được là đã có thể đáp ứng yêu cầu gia công.
+
+Phương pháp thứ hai là sử dụng đòn kẹp, gối đỡ và bulông đầu chữ T.
+
+Chỉ vào hình 2.11 bên phải.
+
+Trong hình này, số 1 là chi tiết gia công, số 2 là đòn kẹp, số 3 là gối đỡ và số 4 là bàn máy.
+
+Bulông đầu chữ T được lắp vào rãnh T trên bàn máy. Khi siết bulông, đòn kẹp sẽ ép chi tiết xuống, giúp giữ phôi trong quá trình gia công.
+
+Ưu điểm của phương pháp này là khá linh hoạt. Ta có thể thay đổi vị trí đòn kẹp và gối đỡ để phù hợp với nhiều loại phôi khác nhau, đặc biệt là những phôi lớn hoặc có hình dạng không thuận tiện để kẹp bằng ê tô.
+
+Chỉ vào hình đòn kẹp.
+
+Đòn kẹp hoạt động tương tự như một chiếc đòn bẩy.
+
+Một đầu đòn kẹp tác dụng lực lên chi tiết, đầu còn lại tựa vào gối đỡ. Bulông được siết xuống để tạo lực kẹp.
+
+Gối đỡ thường có nhiều bậc khác nhau, nhờ đó có thể lựa chọn độ cao phù hợp với phôi. Khi lắp đúng, đòn kẹp sẽ nằm ở vị trí thuận lợi và truyền lực xuống chi tiết.
+
+Ở hình phía dưới, ta có thể thấy một cách bố trí phức tạp hơn. Ngoài đòn kẹp và gối đỡ, còn có thêm gối tựa để hỗ trợ chi tiết tại một vị trí khác.
+
+Với những chi tiết có hình dạng phức tạp hơn nữa, ta có thể sử dụng đồ gá riêng hoặc đồ gá tổ hợp.
+
+Đồ gá tổ hợp được ghép từ các bộ phận tiêu chuẩn, nên có thể thay đổi cách bố trí mà không cần chế tạo hoàn toàn một đồ gá mới.
+
+Mục tiêu cuối cùng vẫn là gia công được nhiều bề mặt trong một lần gá, hạn chế việc tháo phôi ra rồi gá lại.
+
+Bởi vì mỗi lần gá lại đều có thể phát sinh sai số, nên nếu có thể gia công nhiều nguyên công trong cùng một lần gá thì sẽ thuận lợi hơn cho việc đảm bảo độ chính xác.
+
+Slide 5 – Các nguồn lực kẹp
+
+Ở phần này, nhóm em sẽ phân loại các phương pháp gá kẹp theo nguồn tạo lực kẹp.
+
+Có thể hiểu đơn giản là lực giữ phôi được tạo ra bằng cách nào.
+
+Tùy vào kích thước phôi, vật liệu và điều kiện gia công mà ta lựa chọn nguồn lực kẹp phù hợp. Phôi nhỏ, lực cắt nhẹ thì có thể sử dụng cơ cấu đơn giản. Còn với phôi lớn hoặc lực cắt lớn, yêu cầu về lực kẹp sẽ cao hơn.
+
+Đầu tiên là ê tô kẹp tay.
+
+Đây là loại phổ biến nhất, lực kẹp được tạo ra khi người vận hành quay tay vặn. Ưu điểm là đơn giản, dễ sử dụng và không cần nguồn năng lượng bên ngoài.
+
+Tiếp theo là ê tô khí nén.
+
+Loại này sử dụng khí nén để tạo lực kẹp, giúp thao tác nhanh hơn so với kẹp bằng tay. Tuy nhiên, lực kẹp của ê tô khí nén thường không lớn, nên cần lựa chọn phù hợp với điều kiện gia công.
+
+Loại thứ ba là ê tô thủy lực.
+
+Ê tô thủy lực có thể tạo ra lực kẹp lớn và có khả năng điều chỉnh lực kẹp. Ngoài ra, loại này còn có thể được thiết kế theo dạng tự định tâm hoặc không tự định tâm.
+
+Với ê tô tự định tâm, hai má kẹp di chuyển để đưa phôi về vị trí trung tâm. Điều này giúp thuận tiện hơn khi cần định vị phôi đối xứng qua tâm.
+
+Cuối cùng là bàn từ tính.
+
+Bàn từ giữ phôi bằng lực từ, nên không cần sử dụng đòn kẹp hoặc má kẹp theo cách thông thường.
+
+Tuy nhiên, phương pháp này có một hạn chế quan trọng là chỉ phù hợp với những phôi có khả năng bị hút từ. Đây là phần nhóm em bổ sung ngoài nội dung bài giảng.
+
+Chỉ vào bảng bên phải.
+
+Vậy làm thế nào để lựa chọn lực kẹp phù hợp?
+
+Theo nội dung nhóm em tìm hiểu, lực kẹp cần được xem xét dựa trên trọng lượng phôi, vật liệu, kích thước phôi và chiều sâu cắt.
+
+Các yếu tố này ảnh hưởng đến lực tác dụng lên phôi trong quá trình gia công.
+
+Vì vậy, không thể sử dụng một lực kẹp cố định cho tất cả các chi tiết. Lực kẹp cần đủ để giữ phôi ổn định, nhưng cũng không nên quá lớn nếu có thể làm biến dạng chi tiết.
+
+Trong phần này, nhóm em không đưa ra giá trị lực kẹp cụ thể, vì tài liệu tham khảo chưa cung cấp số liệu để tính toán cho từng trường hợp.
+
+Slide 6 – Xu hướng gá kẹp hiện đại
+
+Sau khi tìm hiểu các phương pháp gá kẹp truyền thống, nhóm em nhận thấy xu hướng hiện đại tập trung chủ yếu vào việc giảm thời gian chuẩn bị và hạn chế thời gian máy phải dừng.
+
+Đầu tiên là hệ gá modul.
+
+Thay vì chế tạo một đồ gá hoàn toàn mới cho từng chi tiết, hệ gá modul sử dụng các bộ phận tiêu chuẩn có thể lắp ghép với nhau.
+
+Khi thay đổi chi tiết gia công, người vận hành chỉ cần thay đổi cách bố trí các modul, nhờ đó tiết kiệm thời gian thiết kế và chuẩn bị đồ gá.
+
+Tiếp theo là bàn quay hai vị trí.
+
+Với hệ thống này, phôi có thể được gá ở một vị trí bên ngoài vùng gia công. Trong khi máy đang gia công phôi thứ nhất, người vận hành có thể chuẩn bị phôi tiếp theo ở vị trí còn lại.
+
+Khi gia công xong, bàn quay sẽ đưa phôi mới vào vùng làm việc.
+
+Nhờ đó, thời gian chuẩn bị phôi có thể diễn ra song song với thời gian máy đang gia công, thay vì phải chờ máy dừng hoàn toàn.
+
+Một giải pháp khác là bàn gá chuẩn, hay còn gọi là pallet.
+
+Phôi được gá sẵn trên pallet ở bên ngoài máy. Sau đó, pallet được đưa vào máy và định vị theo một vị trí chuẩn.
+
+Điểm thuận lợi của phương pháp này là có thể chuẩn bị phôi trước, đồng thời giúp việc thay đổi phôi nhanh và lặp lại vị trí gá chính xác hơn.
+
+Cuối cùng là robot kết hợp cơ cấu kẹp tự động.
+
+Chỉ vào hình bên phải.
+
+Ở đây, robot có thể lấy phôi từ bàn chuẩn bị, sau đó đưa phôi vào máy để gia công.
+
+Cơ cấu kẹp có thể đóng mở tự động bằng thủy lực hoặc khí nén, giúp giảm sự can thiệp trực tiếp của người vận hành.
+
+Trong hình, phần bàn đặt phôi được chú thích là workpiece table.
+
+Có thể thấy, các giải pháp này đều hướng đến một mục tiêu chung: chuẩn bị phôi nhanh hơn, giảm thời gian dừng máy và tăng khả năng tự động hóa trong sản xuất.
+
+Slide 7 – Tóm tắt và thảo luận
+
+Nếu phải nhớ một ý quan trọng nhất trong bài này, thì theo nhóm em, đó là:
+
+Định vị để phôi nằm đúng chỗ, kẹp chặt để phôi giữ nguyên vị trí đó.
+
+Còn việc chọn phương pháp gá kẹp cụ thể thì phụ thuộc vào hình dạng, kích thước của phôi và số lượng cần gia công. Em xin nói rõ hơn theo ba tình huống trên slide.
+
+Tình huống thứ nhất là phôi đơn giản, dạng khối. Ở trường hợp này, một chiếc ê tô là đủ. Theo giáo trình, khi phay đơn giản thì ê tô có mỏ kẹp điều chỉnh được là phù hợp. Ê tô đa năng, thao tác nhanh, và rất hợp với phôi dạng khối.
+
+Tình huống thứ hai là phôi lớn hoặc có hình dạng phức tạp. Lúc này ê tô thường không ôm được phôi, nên ta kẹp trực tiếp lên bàn máy bằng đòn kẹp, gối đỡ và bulông đầu chữ T. Nếu chi tiết phức tạp hơn nữa, ta chế tạo đồ gá riêng hoặc ghép đồ gá tổ hợp từ các bộ phận tiêu chuẩn, để gia công hoàn thiện mà không phải đổi gá.
+
+Tình huống thứ ba là sản xuất hàng loạt. Khi số chi tiết nhiều, thời gian tháo lắp phôi cộng lại sẽ rất đáng kể. Vì vậy người ta dùng hệ gá modul, bàn gá chuẩn palette, bàn quay hai vị trí hoặc robot, để phôi được gá ở ngoài máy trong lúc máy đang gia công, nhờ đó máy ít phải dừng.
+
+Đây là những nhận xét mà nhóm em tổng hợp từ các nội dung đã tìm hiểu, không phải quy tắc có sẵn trong tài liệu.
+
+Bây giờ, nhóm em xin đặt ra một câu hỏi để thảo luận:
+
+Nếu có một chi tiết cần gia công trên máy phay CNC, chúng ta sẽ lựa chọn phương pháp gá kẹp nào, và dựa trên những yếu tố gì để đưa ra lựa chọn đó?
+
+Nhóm em xin phép đưa ra cách trả lời của nhóm. Theo nhóm em, ta có thể đi qua bốn câu hỏi theo thứ tự.
+
+Câu hỏi thứ nhất: phôi sẽ được định vị ở đâu? Ta cần chọn mặt chuẩn để phôi tựa vào, và gốc phôi phải khớp với gốc toạ độ mà người lập trình đã chọn. Nếu bước này sai thì kẹp chắc đến đâu cũng vô ích.
+
+Câu hỏi thứ hai: cần lực kẹp lớn đến mức nào? Theo bài giảng, lực kẹp phụ thuộc vào trọng lượng phôi, vật liệu, kích thước và chiều sâu cắt. Phôi nhỏ, cắt nhẹ thì không cần lực lớn. Phôi nặng, cắt sâu thì cần lực kẹp lớn hơn, và khi đó ta nghĩ đến ê tô thuỷ lực thay cho ê tô kẹp tay.
+
+Câu hỏi thứ ba: hình dạng phôi phù hợp với dụng cụ kẹp nào? Phôi dạng khối thì dùng ê tô. Phôi lớn hoặc phức tạp thì dùng đòn kẹp, gối đỡ hoặc đồ gá riêng.
+
+Câu hỏi thứ tư: cần gia công bao nhiêu chi tiết, và dao có tiếp cận được hết các mặt cần gia công không? Số lượng ít thì gá thủ công là đủ. Số lượng nhiều thì nên chuyển sang gá modul hoặc palette. Đồng thời, ta chọn cách gá sao cho số lần gá ít nhất, và đồ gá không cản đường dao.
+
+Em xin lấy một ví dụ. Với một chi tiết dạng khối nhỏ chỉ cần làm vài chiếc, nhóm em sẽ chọn ê tô kẹp tay. Cũng chi tiết đó nhưng cần làm vài trăm chiếc, nhóm em vẫn dùng ê tô nhưng chuyển sang ê tô thuỷ lực hoặc khí nén kết hợp palette, để việc thay phôi nhanh và lực kẹp ổn định. Còn nếu là một tấm lớn không vừa ê tô, nhóm em sẽ dùng đòn kẹp và gối đỡ, đồng thời đặt đòn kẹp tránh vùng dao đi qua.
+
+Như vậy, không có một cách gá đúng cho mọi chi tiết. Câu trả lời của nhóm em là: chọn dựa trên bốn yếu tố, gồm vị trí định vị, lực kẹp cần thiết, hình dạng phôi và số lượng sản xuất. Phần ví dụ này là suy luận của nhóm em, và nhóm em rất mong nhận được ý kiến bổ sung của thầy cô.
+
+Nhóm em xin chân thành cảm ơn thầy cô đã lắng nghe và rất mong nhận được những góp ý từ thầy cô.

@@ -196,7 +196,7 @@ s = new_slide(
     "[~3 phút] Giới thiệu hai cách kẹp cơ khí phổ biến nhất trên máy phay. Hình bên phải là hình 2.11 "
     "(giáo trình, trang 43): chỉ lần lượt vào các chi tiết đánh số – chi tiết gia công, đòn kẹp, "
     "gối đỡ, bàn máy; bulông đầu chữ T đi vào rãnh T của bàn máy. Phay đơn giản thì ê tô có mỏ kẹp điều chỉnh "
-    "được là đủ; chi tiết phức tạp thì dùng đồ gá riêng hoặc đồ gá tổ hợp từ bộ phận tiêu chuẩn "
+    "được là đủ (hình ê tô bên trái là hình 2.11a); chi tiết phức tạp thì dùng đồ gá riêng hoặc đồ gá tổ hợp từ bộ phận tiêu chuẩn "
     "để gia công hoàn thiện không cần đổi gá.")
 set_bullets(body(s), [
     ("Ê tô đa năng: ", "kẹp tay, hợp phôi dạng khối"),
@@ -204,7 +204,9 @@ set_bullets(body(s), [
     ("Phay đơn giản: ", "ê tô là đủ"),
     ("Phôi phức tạp: ", "đồ gá riêng hoặc gá tổ hợp, không cần đổi gá"),
     ("Phay nhiều mặt: ", "gá ít lần nhất"),
-], 0.45, 1.3, 5.9, 5.3, size=20)
+], 0.45, 1.25, 6.0, 3.1, size=17)
+picture(s, "p-007.png", 0.9, 4.3, w=4.6)
+text(s, 0.8, 6.22, 5.7, 0.35, "Hình 2.11a: ê tô kẹp phôi trên bàn máy phay (nguồn: giáo trình, trang 43)", size=12, color=GREY)
 picture(s, "p-004.png", 7.0, 1.3, w=5.6)
 text(s, 7.0, 3.78, 5.6, 0.35, "Hình 2.11b: đòn kẹp – gối đỡ trên bàn máy", size=12, color=GREY)
 picture(s, "p-005.png", 7.0, 4.2, w=5.6)
@@ -313,7 +315,7 @@ COMMENTS = [
     "Gốc phôi và trục X, Z lấy từ chương 3.1. Sơ đồ là hình minh hoạ tự vẽ, không phải hình trong giáo trình. "
     "Nên nhấn mạnh slide này với giáo viên vì sinh viên hay nhầm định vị với kẹp chặt.",
     "Hình 2.11b, c lấy từ bài giảng chương 2.3 (trang 14), cùng hình trong giáo trình trang 43. "
-    "Chưa có hình ê tô (2.11a) vì ảnh chụp sách bị nghiêng và có bóng. Nếu có ảnh rõ hơn thì thêm vào.",
+    "Hình ê tô 2.11a cắt từ ảnh chụp trang 43 của giáo trình (đã chỉnh sáng, độ phân giải thấp nên hơi mờ). Nếu có ảnh ê tô rõ hơn thì thay vào nguon/images/p-007.png.",
     "Ba hàng đầu theo bài giảng chương 2.3 (trang 14). Ý 'bàn từ tính chỉ dùng cho phôi có từ tính' là bổ sung "
     "ngoài tài liệu, cần xác nhận trước khi trình bày. Không đưa số lực kẹp vì tài liệu không nêu.",
     "Hệ gá modul và bàn quay hai vị trí: bài giảng chương 2.3 (trang 14). Robot + kẹp tự động: trang 15. "
