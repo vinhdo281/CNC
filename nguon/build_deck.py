@@ -116,6 +116,93 @@ def picture(slide, name, x, y, w=None, h=None):
     return pic
 
 
+# ============ Animation (hiệu ứng xuất hiện) ============
+from pptx.oxml import parse_xml
+from pptx.enum.shapes import MSO_SHAPE_TYPE
+
+NS_PML = "http://schemas.openxmlformats.org/presentationml/2006/main"
+
+
+class Anim:
+    """Mỗi step = một lần bấm chuột, các đối tượng trong step hiện dần (fade).
+    Step đầu tự chạy ngay khi vào slide (auto_first)."""
+
+    def __init__(self, slide):
+        self.s = slide
+        self.seen = {sh.shape_id for sh in slide.shapes}
+        self.steps = []
+
+    def group(self, stagger=80):
+        new = [sh for sh in self.s.shapes if sh.shape_id not in self.seen]
+        self.seen.update(sh.shape_id for sh in new)
+        if new:
+            self.steps.append(([(sh, None) for sh in new], stagger))
+
+    def step(self, *items, stagger=80):
+        out = []
+        for it in items:
+            if isinstance(it, tuple):
+                out.append(it)
+            else:
+                out.append((it, None)); self.seen.add(it.shape_id)
+        self.steps.append((out, stagger))
+
+    def build(self, auto_first=True):
+        n = [2]
+
+        def nid():
+            n[0] += 1
+            return n[0]
+        bld = {}
+        clicks = []
+        for si, (items, stagger) in enumerate(self.steps):
+            auto = auto_first and si == 0
+            effs = []
+            for k, (sh, para) in enumerate(items):
+                is_sp = sh._element.tag.endswith("}sp")
+                if para is None:
+                    tgt = f'<p:spTgt spid="{sh.shape_id}"/>'
+                else:
+                    tgt = (f'<p:spTgt spid="{sh.shape_id}"><p:txEl><p:pRg st="{para}" end="{para}"/>'
+                           f'</p:txEl></p:spTgt>')
+                if is_sp:
+                    bld[sh.shape_id] = para is not None or bld.get(sh.shape_id, False)
+                node = ("afterEffect" if auto else "clickEffect") if k == 0 else "withEffect"
+                grp = ' grpId="0"' if is_sp else ""
+                effs.append(
+                    f'<p:par><p:cTn id="{nid()}" presetID="10" presetClass="entr" presetSubtype="0" '
+                    f'fill="hold"{grp} nodeType="{node}"><p:stCondLst><p:cond delay="{k * stagger}"/></p:stCondLst>'
+                    f'<p:childTnLst><p:set><p:cBhvr><p:cTn id="{nid()}" dur="1" fill="hold"><p:stCondLst>'
+                    f'<p:cond delay="0"/></p:stCondLst></p:cTn><p:tgtEl>{tgt}</p:tgtEl><p:attrNameLst>'
+                    f'<p:attrName>style.visibility</p:attrName></p:attrNameLst></p:cBhvr><p:to>'
+                    f'<p:strVal val="visible"/></p:to></p:set><p:animEffect transition="in" filter="fade">'
+                    f'<p:cBhvr><p:cTn id="{nid()}" dur="500"/><p:tgtEl>{tgt}</p:tgtEl></p:cBhvr>'
+                    f'</p:animEffect></p:childTnLst></p:cTn></p:par>')
+            cond = ('<p:cond delay="indefinite"/><p:cond evt="onBegin" delay="0"><p:tn val="2"/></p:cond>'
+                    if auto else '<p:cond delay="indefinite"/>')
+            clicks.append(
+                f'<p:par><p:cTn id="{nid()}" fill="hold"><p:stCondLst>{cond}</p:stCondLst><p:childTnLst>'
+                f'<p:par><p:cTn id="{nid()}" fill="hold"><p:stCondLst><p:cond delay="0"/></p:stCondLst>'
+                f'<p:childTnLst>{"".join(effs)}</p:childTnLst></p:cTn></p:par></p:childTnLst></p:cTn></p:par>')
+        blds = "".join(
+            f'<p:bldP spid="{i}" grpId="0" build="p"/>' if para else f'<p:bldP spid="{i}" grpId="0" animBg="1"/>'
+            for i, para in bld.items())
+        xml = (
+            f'<p:timing xmlns:p="{NS_PML}"><p:tnLst><p:par><p:cTn id="1" dur="indefinite" restart="never" '
+            f'nodeType="tmRoot"><p:childTnLst><p:seq concurrent="1" nextAc="seek"><p:cTn id="2" '
+            f'dur="indefinite" nodeType="mainSeq"><p:childTnLst>{"".join(clicks)}</p:childTnLst></p:cTn>'
+            f'<p:prevCondLst><p:cond evt="onPrev" delay="0"><p:tgtEl><p:sldTgt/></p:tgtEl></p:cond>'
+            f'</p:prevCondLst><p:nextCondLst><p:cond evt="onNext" delay="0"><p:tgtEl><p:sldTgt/></p:tgtEl>'
+            f'</p:cond></p:nextCondLst></p:seq></p:childTnLst></p:cTn></p:par></p:tnLst>'
+            f'<p:bldLst>{blds}</p:bldLst></p:timing>')
+        self.s._element.append(parse_xml(xml))
+
+
+def add_transition(slide):
+    clr = slide._element.find(f"{{{NS_PML}}}clrMapOvr")
+    clr.addnext(parse_xml(f'<p:transition xmlns:p="{NS_PML}" spd="med"><p:fade/></p:transition>'))
+
+
 # ============ Slide A: vai trò & 4 nhiệm vụ ============
 s = new_slide(
     "Gá kẹp quyết định độ chính xác của chi tiết phay CNC",
@@ -124,6 +211,7 @@ s = new_slide(
     "Bốn nhiệm vụ lấy từ bài giảng chương 2.3. Máy CNC tập trung nhiều nguyên công trong một lần gá nên "
     "một sai số gá sẽ lặp lại cho cả loạt chi tiết.")
 s.shapes._spTree.remove(body(s)._element)
+a = Anim(s)
 cards = [
     ("1", "Định vị chính xác", "Xác định đúng vị trí phôi trên bàn máy"),
     ("2", "Kẹp chặt", "Chống lại lực cắt khi gia công"),
@@ -140,12 +228,16 @@ for i, (n, h, d) in enumerate(cards):
          anchor=MSO_ANCHOR.MIDDLE, shape=c)
     text(s, x + 0.1, y0 + 1.15, cw - 0.2, 0.6, h, size=20, bold=True, color=RED)
     text(s, x + 0.1, y0 + 1.75, cw - 0.2, 1.0, d, size=16, color=INK)
+    a.group()
 box(s, 0.45, 4.6, 12.4, 0.07, fill=GOLD)
 text(s, 0.45, 4.85, 12.4, 0.5, "Vị trí lắp: trên bàn máy phay",
      size=20, color=INK)
+a.group()
 text(s, 0.45, 5.5, 12.4, 0.9,
      ["Máy CNC gia công nhiều nguyên công trong một lần gá",
       "→ gá sai một lần thì sai cả loạt chi tiết"], size=20, bold=True, color=RED)
+a.group()
+a.build()
 
 # ============ Slide B: định vị vs kẹp chặt ============
 s = new_slide(
@@ -156,6 +248,7 @@ s = new_slide(
     "trục X song song mặt kẹp (chương 3.1). Giáo trình trang 42: việc kẹp cần nhanh, thông thoáng và "
     "định vị lại phải chính xác khi đổi chi tiết.")
 s.shapes._spTree.remove(body(s)._element)
+a = Anim(s)
 for k, (h, d) in enumerate([
     ("ĐỊNH VỊ", ["Xác định vị trí phôi", "so với gốc toạ độ", "→ phôi nằm ở đâu?"]),
     ("KẸP CHẶT", ["Giữ phôi không xê dịch", "khi chịu lực cắt", "→ phôi có đứng yên không?"]),
@@ -165,6 +258,7 @@ for k, (h, d) in enumerate([
     box(s, 0.45, y, 0.12, 2.5, fill=RED)
     text(s, 0.75, y + 0.15, 5.0, 0.5, h, size=22, bold=True, color=RED)
     text(s, 0.75, y + 0.75, 5.0, 1.6, d, size=19, color=INK)
+    a.group()
 # schematic (side view)
 sx, sy = 6.4, 1.35
 box(s, sx, sy, 6.5, 5.2, fill=None, line=MID)
@@ -175,11 +269,14 @@ text(s, 0, 0, 0, 0, "Bàn máy", size=14, bold=True, color=WHITE, align=PP_ALIGN
 part = box(s, sx + 1.4, sy + 2.2, 3.0, 1.8, fill=RGBColor(0xBF, 0xD7, 0xEA), line=INK, lw=1.5)
 text(s, 0, 0, 0, 0, "Phôi", size=18, bold=True, color=INK, align=PP_ALIGN.CENTER,
      anchor=MSO_ANCHOR.MIDDLE, shape=part)
+a.group()
 box(s, sx + 1.2, sy + 2.2, 0.2, 1.8, fill=GOLD)          # mặt chuẩn (bên trái)
 text(s, sx + 0.1, sy + 3.55, 1.3, 0.4, "Mặt chuẩn", size=13, bold=True, color=GOLD)
+a.group()
 line(s, sx + 5.2, sy + 3.1, sx + 4.45, sy + 3.1, color=RED, w=4, arrow=True)   # lực kẹp ngang
 line(s, sx + 2.9, sy + 1.45, sx + 2.9, sy + 2.15, color=RED, w=4, arrow=True)  # lực kẹp đứng
 text(s, sx + 3.0, sy + 1.3, 2.2, 0.4, "Lực kẹp", size=15, bold=True, color=RED)
+a.group()
 # origin + axes
 ox, oy = sx + 1.4, sy + 2.2
 dot = box(s, ox - 0.09, oy - 0.09, 0.18, 0.18, fill=RED, shape=MSO_SHAPE.OVAL)
@@ -189,6 +286,8 @@ text(s, ox + 0.95, oy - 0.42, 0.5, 0.35, "X", size=15, bold=True)
 text(s, ox - 0.5, oy - 0.95, 0.5, 0.35, "Z", size=15, bold=True)
 text(s, sx + 0.1, sy + 0.65, 3.4, 0.4, "Gốc phôi (điểm không chi tiết)", size=13, color=RED, bold=True)
 line(s, sx + 0.7, sy + 1.05, ox - 0.1, oy - 0.1, color=RED, w=1.25, arrow=True)
+a.group()
+a.build()
 
 # ============ Slide C: kẹp cơ khí ============
 s = new_slide(
@@ -205,12 +304,20 @@ set_bullets(body(s), [
     ("Phôi phức tạp: ", "đồ gá riêng hoặc gá tổ hợp, không cần đổi gá"),
     ("Phay nhiều mặt: ", "gá ít lần nhất"),
 ], 0.45, 1.25, 6.0, 3.1, size=17)
-picture(s, "p-007.png", 0.9, 4.3, w=4.6)
-text(s, 0.8, 6.22, 5.7, 0.35, "Hình 2.11a: ê tô kẹp phôi trên bàn máy phay (nguồn: giáo trình, trang 43)", size=12, color=GREY)
-picture(s, "p-004.png", 7.0, 1.3, w=5.6)
-text(s, 7.0, 3.78, 5.6, 0.35, "Hình 2.11b: đòn kẹp – gối đỡ trên bàn máy", size=12, color=GREY)
-picture(s, "p-005.png", 7.0, 4.2, w=5.6)
-text(s, 7.0, 6.38, 5.6, 0.35, "Hình 2.11c: gối tựa, đòn kẹp, gối đỡ (nguồn: giáo trình, trang 43)", size=12, color=GREY)
+bd, a = body(s), Anim(s)
+pa = picture(s, "p-007.png", 0.9, 4.3, w=4.6)
+ca = text(s, 0.8, 6.22, 5.7, 0.35, "Hình 2.11a: ê tô kẹp phôi trên bàn máy phay", size=12, color=GREY)
+pb = picture(s, "p-004.png", 7.0, 1.3, w=5.6)
+cb = text(s, 7.0, 3.78, 5.6, 0.35, "Hình 2.11b: đòn kẹp – gối đỡ trên bàn máy", size=12, color=GREY)
+pc = picture(s, "p-005.png", 7.0, 4.2, w=5.6)
+cc = text(s, 7.0, 6.38, 5.6, 0.35, "Hình 2.11c: gối tựa, đòn kẹp, gối đỡ", size=12, color=GREY)
+a.step((bd, 0), pa, ca)
+a.step((bd, 1), pb, cb)
+a.step(pc, cc)
+a.step((bd, 2))
+a.step((bd, 3))
+a.step((bd, 4))
+a.build()
 
 # ============ Slide D: nguồn lực kẹp ============
 s = new_slide(
@@ -220,6 +327,7 @@ s = new_slide(
     "cũng chỉ nói lực kẹp phụ thuộc các yếu tố này. Ý chỉ dùng bàn từ cho phôi có từ tính là phần bổ sung ngoài "
     "tài liệu, cần xác nhận lại với tài liệu của thầy.")
 s.shapes._spTree.remove(body(s)._element)
+a = Anim(s)
 rows = [
     ("Kiểu kẹp", "Đặc điểm"),
     ("Ê tô kẹp tay", "Đa năng; lực kẹp bằng tay"),
@@ -231,9 +339,9 @@ gt = s.shapes.add_table(len(rows), 2, Inches(0.45), Inches(1.35), Inches(8.3), I
 tbl = gt.table
 tbl.columns[0].width = Inches(2.6)
 tbl.columns[1].width = Inches(5.7)
-for r, (a, b) in enumerate(rows):
+for r, (ka, kb) in enumerate(rows):
     tbl.rows[r].height = Inches(0.7 if r == 0 else 0.92)
-    for c, v in enumerate((a, b)):
+    for c, v in enumerate((ka, kb)):
         cell = tbl.cell(r, c)
         cell.text = v
         cell.vertical_anchor = MSO_ANCHOR.MIDDLE
@@ -245,11 +353,14 @@ for r, (a, b) in enumerate(rows):
                 run.font.bold = (r == 0 or c == 0)
                 run.font.color.rgb = WHITE if r == 0 else (RED if c == 0 else INK)
 text(s, 0.45, 5.9, 8.3, 0.5, "* Bổ sung ngoài tài liệu: chỉ dùng cho phôi có từ tính", size=13, color=GREY)
+a.group()
 box(s, 9.1, 1.35, 3.8, 4.4, fill=LIGHT)
 box(s, 9.1, 1.35, 3.8, 0.09, fill=GOLD)
 text(s, 9.2, 1.6, 3.6, 0.5, "Chọn lực kẹp theo", size=20, bold=True, color=RED)
 for k, it in enumerate(["Trọng lượng phôi", "Vật liệu", "Kích thước phôi", "Chiều sâu cắt"]):
     text(s, 9.2, 2.3 + k * 0.8, 3.6, 0.6, "• " + it, size=21, color=INK)
+a.group(stagger=250)
+a.build()
 
 # ============ Slide E: hiện đại ============
 s = new_slide(
@@ -265,41 +376,105 @@ set_bullets(body(s), [
     ("Bàn gá chuẩn (palette): ", "chuẩn bị phôi ngoài vùng gia công"),
     ("Robot + kẹp tự động: ", "cơ cấu kẹp đóng mở bằng thuỷ lực hoặc khí nén"),
 ], 0.45, 1.3, 6.0, 5.3, size=21)
-picture(s, "p-006.png", 6.8, 1.45, w=6.1)
-text(s, 6.8, 5.5, 6.1, 0.6,
-     "Ô gia công CNC có robot và bàn phôi (workpiece table). Nguồn: bài giảng Machine-tool and Tribology, chương 2.3",
-     size=12, color=GREY)
+bd, a = body(s), Anim(s)
+pic_e = picture(s, "p-006.png", 6.8, 1.45, w=6.1)
+cap_e = text(s, 6.8, 5.5, 6.1, 0.6,
+             "Ô gia công CNC có robot và bàn phôi (workpiece table)",
+             size=12, color=GREY)
+a.step((bd, 0))
+a.step((bd, 1))
+a.step((bd, 2))
+a.step((bd, 3), pic_e, cap_e)
+a.build()
 
 # ============ Slide F: tóm tắt ============
 s = new_slide(
     "Tóm tắt: chọn gá kẹp theo phôi và sản lượng",
     "[~2 phút] Nhắc lại công thức: gá kẹp = định vị + kẹp chặt. Ba cột là gợi ý chọn phương án theo ba tình huống. "
-    "Dành 1–2 phút cuối cho câu hỏi thảo luận và hỏi đáp của giáo viên.")
+    "Sau đó chuyển sang hai câu hỏi trắc nghiệm, rồi hỏi đáp với giáo viên.")
 s.shapes._spTree.remove(body(s)._element)
+a = Anim(s)
 text(s, 0.45, 1.25, 12.4, 0.6, "Gá kẹp = Định vị + Kẹp chặt", size=28, bold=True, color=RED,
      align=PP_ALIGN.CENTER)
+a.group()
 trio = [
     ("Phôi đơn giản", "Ê tô"),
     ("Phôi lớn, phức tạp", "Đòn kẹp – gối đỡ, đồ gá riêng hoặc gá tổ hợp"),
     ("Sản xuất loạt", "Gá modul, palette, robot"),
 ]
 bw, bg = 3.85, 0.425
-for i, (a, b) in enumerate(trio):
+for i, (head_, b) in enumerate(trio):
     x = 0.45 + i * (bw + bg)
     box(s, x, 2.15, bw, 0.8, fill=RED)
-    text(s, x, 2.15, bw, 0.8, a, size=21, bold=True, color=WHITE, align=PP_ALIGN.CENTER,
+    text(s, x, 2.15, bw, 0.8, head_, size=21, bold=True, color=WHITE, align=PP_ALIGN.CENTER,
          anchor=MSO_ANCHOR.MIDDLE)
     box(s, x, 2.95, bw, 1.6, fill=LIGHT)
     text(s, x + 0.1, 2.95, bw - 0.2, 1.6, b, size=20, color=INK, align=PP_ALIGN.CENTER,
          anchor=MSO_ANCHOR.MIDDLE)
+    a.group()
 box(s, 0.45, 5.0, 12.4, 1.5, fill=None, line=GOLD, lw=2.5)
-text(s, 0.65, 5.05, 12.0, 0.45, "Câu hỏi thảo luận", size=18, bold=True, color=RED)
+text(s, 0.65, 5.05, 12.0, 0.45, "Kiểm tra nhanh", size=18, bold=True, color=RED)
 text(s, 0.65, 5.5, 12.0, 0.95,
-     "Với một chi tiết cụ thể, nhóm chọn cách gá nào và vì sao?", size=22, color=INK)
+     "Hai câu hỏi trắc nghiệm ngắn về nội dung vừa trình bày", size=22, color=INK)
+a.group()
+a.build()
+
+# ============ Slide G, H: câu hỏi trắc nghiệm (lấy từ nội dung bài giảng chương 2.3) ============
+def quiz_slide(title, notes, question, options, correct):
+    s = new_slide(title, notes)
+    s.shapes._spTree.remove(body(s)._element)
+    a = Anim(s)
+    box(s, 0.45, 1.3, 12.4, 1.35, fill=LIGHT)
+    box(s, 0.45, 1.3, 0.12, 1.35, fill=RED)
+    text(s, 0.8, 1.3, 11.9, 1.35, question, size=28, bold=True, color=RED, anchor=MSO_ANCHOR.MIDDLE)
+    a.group()
+    oh, og = 0.8, 0.14
+    for k, opt in enumerate(options):
+        y = 3.0 + k * (oh + og)
+        box(s, 0.45, y, 12.4, oh, fill=None, line=MID, lw=1.25)
+        c = box(s, 0.6, y + 0.09, 0.62, 0.62, fill=GOLD, shape=MSO_SHAPE.OVAL)
+        text(s, 0, 0, 0, 0, "ABCD"[k], size=22, bold=True, color=WHITE, align=PP_ALIGN.CENTER,
+             anchor=MSO_ANCHOR.MIDDLE, shape=c)
+        text(s, 1.4, y, 9.0, oh, opt, size=24, color=INK, anchor=MSO_ANCHOR.MIDDLE)
+        a.group()
+    y = 3.0 + correct * (oh + og)
+    box(s, 0.45, y, 12.4, oh, fill=None, line=RED, lw=3.5)
+    tag = box(s, 10.6, y + 0.14, 2.0, 0.52, fill=RED, shape=MSO_SHAPE.ROUNDED_RECTANGLE)
+    text(s, 0, 0, 0, 0, "ĐÁP ÁN", size=18, bold=True, color=WHITE, align=PP_ALIGN.CENTER,
+         anchor=MSO_ANCHOR.MIDDLE, shape=tag)
+    a.group()
+    a.build()
+    return s
+
+quiz_slide(
+    "Câu hỏi 1",
+    "[~1 phút] Bấm lần lượt để hiện câu hỏi và từng đáp án, bấm lần cuối để hiện đáp án đúng (B). "
+    "Theo bài giảng chương 2.3, cơ cấu kẹp chặt chi tiết lắp trên trục chính đối với máy tiện và "
+    "trên bàn máy đối với máy phay. Đáp án A là của máy tiện.",
+    "Cơ cấu kẹp chặt chi tiết trên máy phay được lắp ở đâu?",
+    ["Trên trục chính", "Trên bàn máy", "Trên ổ chứa dao", "Trên đầu dao"],
+    1)
+
+quiz_slide(
+    "Câu hỏi 2",
+    "[~1 phút] Bấm lần lượt để hiện câu hỏi và từng đáp án, bấm lần cuối để hiện đáp án đúng (C). "
+    "Theo bài giảng chương 2.3: ê tô kẹp tay là loại đa năng, ê tô khí nén có lực kẹp không lớn, "
+    "ê tô thuỷ lực có lực kẹp lớn và điều chỉnh được. Bàn từ tính kẹp bằng lực từ.",
+    "Kiểu kẹp nào có lực kẹp lớn và điều chỉnh được?",
+    ["Ê tô kẹp tay", "Ê tô khí nén", "Ê tô thuỷ lực", "Bàn từ tính"],
+    2)
 
 # --- put thank-you slide last
 lst.remove(thank)
 lst.append(thank)
+
+for sl_ in (prs.slides[0], prs.slides[len(prs.slides) - 1]):
+    ac = Anim(sl_)
+    tbs = [sh for sh in sl_.shapes if sh.shape_type == MSO_SHAPE_TYPE.TEXT_BOX]
+    ac.step(*tbs, stagger=600)
+    ac.build()
+for sl_ in prs.slides:
+    add_transition(sl_)
 
 # ============ Comment (bình luận review) cho từng slide ============
 from pptx.opc.package import Part
@@ -320,8 +495,11 @@ COMMENTS = [
     "ngoài tài liệu, cần xác nhận trước khi trình bày. Không đưa số lực kẹp vì tài liệu không nêu.",
     "Hệ gá modul và bàn quay hai vị trí: bài giảng chương 2.3 (trang 14). Robot + kẹp tự động: trang 15. "
     "Bàn gá chuẩn (palette): giáo trình trang 43. Chú thích trên hình gốc bằng tiếng Anh.",
-    "Ba cột là gợi ý chọn phương án tổng hợp từ các slide trước, không phải quy tắc có trong tài liệu. "
-    "Có thể đổi câu hỏi thảo luận cho khớp bài giảng của thầy.",
+    "Ba cột là gợi ý chọn phương án tổng hợp từ các slide trước, không phải quy tắc có trong tài liệu.",
+    "Các file bài giảng trong Ref không có sẵn câu hỏi, nên câu hỏi này do nhóm soạn từ nội dung chương 2.3 "
+    "(vị trí lắp cơ cấu kẹp: máy tiện trên trục chính, máy phay trên bàn máy). Đáp án B hiện ở lần bấm cuối.",
+    "Câu hỏi soạn từ nội dung chương 2.3 (ê tô khí nén lực kẹp không lớn, ê tô thuỷ lực lực kẹp lớn và điều chỉnh được). "
+    "Đáp án C hiện ở lần bấm cuối.",
     "Nếu cần, thêm slide Tài liệu tham khảo (bài giảng Machine-tool and Tribology chương 1-3, "
     "giáo trình hình 2.10-2.11) hoặc slide Hỏi đáp trước slide này.",
 ]
